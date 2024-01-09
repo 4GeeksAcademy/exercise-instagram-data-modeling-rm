@@ -7,23 +7,48 @@ from eralchemy2 import render_er
 
 Base = declarative_base()
 
-class Person(Base):
-    __tablename__ = 'person'
-    # Here we define columns for the table person
-    # Notice that each column is also a normal Python instance attribute.
+class Users(Base):
+    __tablename__ = 'users'
     id = Column(Integer, primary_key=True)
-    name = Column(String(250), nullable=False)
+    user_name = Column(String(50), nullable=False)
+    password = Column(String(200))
+    
 
-class Address(Base):
-    __tablename__ = 'address'
-    # Here we define columns for the table address.
-    # Notice that each column is also a normal Python instance attribute.
+class User(Base):
+    __tablename__ = 'user'
     id = Column(Integer, primary_key=True)
-    street_name = Column(String(250))
-    street_number = Column(String(250))
-    post_code = Column(String(250), nullable=False)
-    person_id = Column(Integer, ForeignKey('person.id'))
-    person = relationship(Person)
+    name = Column(String(50), nullable=False)
+    last_name = Column(String(50), nullable=False)
+    user_mail = Column(String(50), unique=True, nullable=False)
+    user_id = Column(Integer, ForeignKey('users.id'))
+    user = relationship(Users)
+
+class Posts(Base):
+    __tablename__ = 'posts'
+    id = Column(Integer, primary_key=True)
+    users_id = Column(String)
+    comment_id = Column(String(700))
+    likes_id = Column(Integer)
+    photos_id = Column(Integer)
+    user_id = Column(Integer, ForeignKey('user.id'))
+    user = relationship(User)
+
+class Photos(Base):
+    __tablename__ = 'photos'
+    id = Column(Integer, primary_key=True)
+    users_id = Column(String)
+    description_id = Column(String(250))
+    likes_id = Column(Integer)
+    user_id = Column(Integer, ForeignKey('user.id'))
+    user = relationship(User)
+
+class Comments(Base):
+    __tablename__ = 'comments'
+    id = Column(Integer, primary_key=True)
+    users_id = Column(String)
+    comment = Column(String(250))
+    user_id = Column(Integer, ForeignKey('user.id'))
+    user = relationship(User)
 
     def to_dict(self):
         return {}

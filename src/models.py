@@ -10,45 +10,39 @@ Base = declarative_base()
 class User(Base):
     __tablename__ = 'user'
     id = Column(Integer, primary_key=True)
-    name = Column(String(50), nullable=False)
-    last_name = Column(String(50), nullable=False)
-    user_mail = Column(String(50), unique=True, nullable=False)
+    name = Column(String(250), nullable=False)
+    lastName = Column(String(250))
+    email = Column(String(250))
+    password = Column(String(200), nullable=False)
+    user_name = Column(String(250), nullable=False)
+    posts = relationship("Post", backref="user")
+
+class Post(Base):
+    __tablename__ = 'post'
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey('user.id'), unique=False)
+    media = relationship("Media", backref="post")
+    comments = relationship("Comment", backref="post")
+
+class Media(Base):
+    __tablename__='media'
+    id = Column(Integer, primary_key=True)
+    content = Column(String(700))
+    post_id = Column(Integer, ForeignKey('post.id'))
+    url = Column(String(200))
+
+class Comment(Base):
+    __tablename__='comment'
+    id = Column(Integer, primary_key=True)
+    description = Column(String(700))
+    post_id = Column(Integer, ForeignKey('post.id'))
+    user_id = Column(Integer, ForeignKey('user.id'))
 
 class Follower(Base):
-    __tablename__ = 'follower'
+    __tablename__= 'follower'
     id = Column(Integer, primary_key=True)
-    user_name = Column(String(50), nullable=False)
-    password = Column(String(200))
-    user_id = Column(Integer, ForeignKey('user.id'))
-    user = relationship(User)
-
-    
-class Posts(Base):
-    __tablename__ = 'posts'
-    id = Column(Integer, primary_key=True)
-    users_id = Column(String)
-    comment_id = Column(String(700))
-    likes_id = Column(Integer)
-    photos_id = Column(Integer)
-    user_id = Column(Integer, ForeignKey('follower.id'))
-    user = relationship(Follower)
-
-class Photos(Base):
-    __tablename__ = 'photos'
-    id = Column(Integer, primary_key=True)
-    users_id = Column(String)
-    description_id = Column(String(250))
-    likes_id = Column(Integer)
-    user_id = Column(Integer, ForeignKey('follower.id'))
-    user = relationship(Follower)
-
-class Comments(Base):
-    __tablename__ = 'comments'
-    id = Column(Integer, primary_key=True)
-    users_id = Column(String)
-    comment = Column(String(250))
-    user_id = Column(Integer, ForeignKey('follower.id'))
-    user = relationship(Follower)
+    user_from_id = Column(Integer, ForeignKey('user.id'), unique= False)
+    user_to_id = Column(Integer, ForeignKey('user.id'), unique= False)
 
     def to_dict(self):
         return {}
